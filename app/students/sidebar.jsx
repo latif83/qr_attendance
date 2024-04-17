@@ -38,9 +38,9 @@ export const AdminSidebar = ({ setShowSidebar }) => {
         </Link>
         <Link
           className={`p-2 rounded-lg hover:font-semibold ${
-            pathname.includes("attendance") && "bg-gray-200"
+            pathname.includes("register") && "bg-gray-200"
           }`}
-          href="/students/attendance"
+          href="/students/register"
           onClick={toggleSidebar}
         >
           Register Courses

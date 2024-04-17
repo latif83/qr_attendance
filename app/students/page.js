@@ -136,6 +136,10 @@ export default function Students(){
             View Attendance History
           </div>
 
+          <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
+            Register Courses
+          </div>
+
           {/* <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
             Book Apointment
           </div>

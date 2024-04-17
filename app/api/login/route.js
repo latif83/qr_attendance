@@ -26,7 +26,7 @@ export async function POST(req) {
       roleIs = "admin";
     } else if (role === "students") {
       tableName = "students";
-      roleIs = "student";
+      roleIs = "students";
     } else if (role === "instructors") {
       tableName = "instructors";
       roleIs = "instructors";

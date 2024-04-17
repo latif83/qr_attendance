@@ -16,23 +16,24 @@ model students {
   password  String
   fname     String
   lname     String
-  studid   String   @unique
+  studid    String   @unique
   address   String
-  level String
+  level     String
   contact   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  studentCourses studentCourses[]
 }
 
 // admins model
 model admins {
-  id             String           @id @default(cuid())
-  email          String           @unique
-  password       String
-  name           String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model instructors {
@@ -48,16 +49,29 @@ model instructors {
   updatedAt DateTime @updatedAt
 
   // Define a one-to-many relationship with courses
-  courses   courses[] // Each instructor can teach multiple courses
+  courses courses[] // Each instructor can teach multiple courses
 }
 
 model courses {
-  id            String    @id @default(cuid())
-  title         String    @unique
-  code          String
-  instructorId  String    // Foreign key referencing instructor's id
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String   @id @default(cuid())
+  title        String   @unique
+  code         String
+  instructorId String // Foreign key referencing instructor's id
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  instructor    instructors @relation(fields: [instructorId], references: [id])
+  instructor     instructors      @relation(fields: [instructorId], references: [id])
+  studentCourses studentCourses[]
+}
+
+model studentCourses {
+  id        String   @id @default(cuid())
+  studentId String // Foreign key referencing student's id
+  courseId  String // Foreign key referencing course's id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Define relationships
+  student students @relation(fields: [studentId], references: [id])
+  course  courses  @relation(fields: [courseId], references: [id])
 }

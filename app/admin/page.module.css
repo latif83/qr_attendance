@@ -1,0 +1,9 @@
+.icons{
+    position: absolute;
+    right: 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    top: 0;
+    font-size: 100px;
+}

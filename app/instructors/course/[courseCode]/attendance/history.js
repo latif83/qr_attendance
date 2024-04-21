@@ -1,7 +1,9 @@
 "use client"
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
-export const AttendanceHistory = () => {
+export const AttendanceHistory = ({courseId}) => {
 
   const [show, setShow] = useState(false);
   const handleChange = (selectedDate) => {
@@ -10,6 +12,36 @@ export const AttendanceHistory = () => {
   const handleClose = (state) => {
     setShow(state);
   };
+
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getAttendanceHistory = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch(`/api/attendance/clockin/students?courseId=${courseId}`);
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setAttendance(responseData.attendanceRecords);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    
+      getAttendanceHistory();
+
+  }, []);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -78,16 +110,35 @@ export const AttendanceHistory = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-200">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50"
-            >
-              March 31
-            </th>
-            <td className="px-6 py-4">12:10</td>
-            <td className="px-6 py-4 bg-gray-50">Abdul-Latif Mohammed</td>
-          </tr>
+
+          {loading ? (
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td colSpan={3} class="px-6 py-4 text-center">
+                <FontAwesomeIcon icon={faSpinner} spin /> Loading...
+              </td>
+            </tr>
+          ) : attendance.length > 0 ? (
+            attendance.map((at) => (
+              <tr className="border-b border-gray-200">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50"
+                >
+                  {new Date(at.clockIn).toDateString()}
+                </th>
+                <td className="px-6 py-4">
+                  {new Date(at.clockIn).toLocaleTimeString()}
+                </td>
+                <td className="px-6 py-4 bg-gray-50">{at.student.fname} {at.student.lname}</td>
+              </tr>
+            ))
+          ) : (
+            <tr colSpan={3} class="bg-white border-b hover:bg-gray-50">
+              {" "}
+              <td class="px-6 py-4">No Data found.</td>{" "}
+            </tr>
+          )}
+
         </tbody>
       </table>
     </div>

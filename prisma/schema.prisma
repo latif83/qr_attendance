@@ -24,6 +24,7 @@ model students {
   updatedAt DateTime @updatedAt
 
   studentCourses studentCourses[]
+  attendance     attendance[]
 }
 
 // admins model
@@ -60,8 +61,10 @@ model courses {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  instructor     instructors      @relation(fields: [instructorId], references: [id])
-  studentCourses studentCourses[]
+  instructor         instructors          @relation(fields: [instructorId], references: [id])
+  studentCourses     studentCourses[]
+  attendanceSessions attendanceSessions[]
+  attendance         attendance[]
 }
 
 model studentCourses {
@@ -74,4 +77,33 @@ model studentCourses {
   // Define relationships
   student students @relation(fields: [studentId], references: [id])
   course  courses  @relation(fields: [courseId], references: [id])
+}
+
+model attendanceSessions {
+  id             String    @id @default(cuid())
+  startDateTime  DateTime
+  endDateTime    DateTime?
+  attendanceCode String
+  courseId       String // Foreign key referencing course's id
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Define relationships
+  course     courses      @relation(fields: [courseId], references: [id])
+  attendance attendance[]
+}
+
+// Attendance model
+model attendance {
+  id                  String   @id @default(cuid())
+  studentId           String
+  courseId            String
+  clockIn             DateTime
+  AttendanceSessionId String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  student           students           @relation(fields: [studentId], references: [id])
+  course            courses            @relation(fields: [courseId], references: [id])
+  AttendanceSession attendanceSessions @relation(fields: [AttendanceSessionId], references: [attendanceCode])
 }

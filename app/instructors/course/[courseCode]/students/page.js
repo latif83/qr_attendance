@@ -1,4 +1,50 @@
-export default function Students(){
+"use client"
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
+export default function Students({params}){
+
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchData, setFetchData] = useState(true);
+
+  useEffect(() => {
+    const getStudents = async () => {
+      try {
+        setLoading(true);
+
+        const data = {
+          courseId : params.courseCode
+        }
+
+        const response = await fetch(`/api/courses/students`,{
+          method:"POST",
+          body : JSON.stringify(data)
+        });
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setStudents(responseData.registeredStudents);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    if (fetchData) {
+      getStudents();
+      setFetchData(false);
+    }
+  }, [fetchData]);
+
     return (
         <div>
             <h1>
@@ -62,29 +108,10 @@ export default function Students(){
             </tr>
           </thead>
           <tbody>
-          <tr class="bg-white border-b hover:bg-gray-50">
-                  <th
-                    scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    BSC/CSM/20222187
-                  </th>
-                  <td class="px-6 py-4">Abdul-Latif Mohammed</td>
-                  <td class="px-6 py-4">latif@gmail.com</td>
-                  <td class="px-6 py-4">300</td>
-                  <td class="px-6 py-4">0593787724</td>
-                  <td class="px-6 py-4">
-                    <a
-                      href="#"
-                      class="font-medium text-green-600 hover:underline"
-                    >
-                      Attendance
-                    </a>
-                  </td>
-                </tr>
-            {/* {loading ? (
+          
+            {loading ? (
               <tr class="bg-white border-b hover:bg-gray-50">
-                <td colSpan={5} class="px-6 py-4 text-center">
+                <td colSpan={6} class="px-6 py-4 text-center">
                   <FontAwesomeIcon icon={faSpinner} spin /> Loading...
                 </td>
               </tr>
@@ -95,18 +122,18 @@ export default function Students(){
                     scope="row"
                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                   >
-                    {student.studid}
+                   {student.student.studid}
                   </th>
-                  <td class="px-6 py-4">{student.fname} {student.lname}</td>
-                  <td class="px-6 py-4">{student.email}</td>
-                  <td class="px-6 py-4">{student.level}</td>
-                  <td class="px-6 py-4">{student.contact}</td>
+                  <td class="px-6 py-4">{student.student.fname} {student.student.lname}</td>
+                  <td class="px-6 py-4">{student.student.email}</td>
+                  <td class="px-6 py-4">{student.student.email}</td>
+                  <td class="px-6 py-4">{student.student.contact}</td>
                   <td class="px-6 py-4">
                     <a
                       href="#"
                       class="font-medium text-green-600 hover:underline"
                     >
-                      Manage
+                      Attendance
                     </a>
                   </td>
                 </tr>
@@ -116,7 +143,7 @@ export default function Students(){
                 {" "}
                 <td class="px-6 py-4">No Students found.</td>{" "}
               </tr>
-            )} */}
+            )}
           </tbody>
         </table>
       </div>

@@ -5,12 +5,22 @@ import { useEffect, useState } from "react";
 import styles from "./registerCourse.module.css";
 import { toast } from "react-toastify";
 
-export const RegisterCourse = ({ setRegCourse }) => {
+export const RegisterCourse = ({ setRegCourse, setFetchData }) => {
   const [loading, setLoading] = useState(false);
 
   const [cousesLoading, setCoursesLoading] = useState(false);
 
   const [courses, setCourses] = useState([]);
+
+  const [sData, setSData] = useState(false);
+
+  const [formData, setFormData] = useState(null);
+
+  const submit = (fData) => {
+    setFormData(fData);
+    setSData(true);
+  };
+
 
   useEffect(() => {
     const getCourses = async () => {
@@ -34,10 +44,45 @@ export const RegisterCourse = ({ setRegCourse }) => {
       }
     };
 
-    getCourses();
-  }, []);
+    const registerCourse = async () => {
+      try {
+        setLoading(true);
 
-  const submit = () => {};
+        const data = {
+          course: formData.get("course"),
+        };
+
+        // console.log(data)
+
+        const response = await fetch("/api/courses/register", {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          setLoading(false);
+          toast.error(responseData.error);
+          return;
+        }
+
+        toast.success(responseData.message);
+        setFetchData(true)
+        setRegCourse(false)
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getCourses();
+    
+    if (sData) {
+      registerCourse();
+      setSData(false);
+    }
+
+  }, [sData]);
 
   return (
     <div className={`${styles.container} flex items-center justify-center`}>

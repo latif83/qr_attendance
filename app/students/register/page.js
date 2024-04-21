@@ -1,18 +1,47 @@
-"use client"
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+"use client";
+import { faPlusCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RegisterCourse } from "./registerCourse";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function RegisterCourses() {
+  const [regCourse, setRegCourse] = useState(false);
 
-    const [regCourse,setRegCourse] = useState(false)
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchData, setFetchData] = useState(true);
 
-    const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const getCourses = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch("/api/courses/register");
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setCourses(responseData.Courses);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    if (fetchData) {
+      getCourses();
+      setFetchData(false);
+    }
+  }, [fetchData]);
 
   return (
     <div className="h-full">
-      {regCourse && <RegisterCourse setRegCourse={setRegCourse} />}
+      {regCourse && <RegisterCourse setRegCourse={setRegCourse} setFetchData={setFetchData} />}
       <h1>Registered Courses</h1>
 
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
@@ -49,7 +78,7 @@ export default function RegisterCourses() {
           </div>
           <div>
             <button
-                onClick={() => setRegCourse(true)}
+              onClick={() => setRegCourse(true)}
               className="p-2 rounded-lg bg-gray-50 flex gap-2 items-center hover:bg-gray-200 text-sm"
             >
               <FontAwesomeIcon icon={faPlusCircle} />
@@ -75,59 +104,40 @@ export default function RegisterCourses() {
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b hover:bg-gray-50">
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
-                IT-209
-              </th>
-              <td class="px-6 py-4">Data Science</td>
-              <td class="px-6 py-4">Nana Peprah</td>
-              {/* <td class="px-6 py-4">
-                    <a
-                      href="#"
-                      class="font-medium text-green-600 hover:underline"
-                    >
-                      Manage
-                    </a>
-                  </td> */}
-            </tr>
-            {/* {loading ? (
+           
+            {loading ? (
               <tr class="bg-white border-b hover:bg-gray-50">
-                <td colSpan={5} class="px-6 py-4 text-center">
+                <td colSpan={3} class="px-6 py-4 text-center">
                   <FontAwesomeIcon icon={faSpinner} spin /> Loading...
                 </td>
               </tr>
-            ) : students.length > 0 ? (
-              students.map((student) => (
+            ) : courses.length > 0 ? (
+              courses.map((course) => (
                 <tr class="bg-white border-b hover:bg-gray-50">
-                  <th
-                    scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    {student.studid}
-                  </th>
-                  <td class="px-6 py-4">{student.fname} {student.lname}</td>
-                  <td class="px-6 py-4">{student.email}</td>
-                  <td class="px-6 py-4">{student.level}</td>
-                  <td class="px-6 py-4">{student.contact}</td>
-                  <td class="px-6 py-4">
-                    <a
-                      href="#"
-                      class="font-medium text-green-600 hover:underline"
-                    >
-                      Manage
-                    </a>
-                  </td>
-                </tr>
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                >
+                  {course.course.code}
+                </th>
+                <td class="px-6 py-4">{course.course.title}</td>
+                <td class="px-6 py-4">{course.course.instructor.fname} {course.course.instructor.lname}</td>
+                {/* <td class="px-6 py-4">
+                      <a
+                        href="#"
+                        class="font-medium text-green-600 hover:underline"
+                      >
+                        Manage
+                      </a>
+                    </td> */}
+              </tr>
               ))
             ) : (
               <tr class="bg-white border-b hover:bg-gray-50">
                 {" "}
-                <td class="px-6 py-4">No Students found.</td>{" "}
+                <td class="px-6 py-4">No Courses found.</td>{" "}
               </tr>
-            )} */}
+            )}
           </tbody>
         </table>
       </div>

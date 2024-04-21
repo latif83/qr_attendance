@@ -1,7 +1,10 @@
+"use client";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-export const AttendanceHistory = () => {
-
+export const AttendanceHistory = ({fetchData,setFetchData}) => {
   const [show, setShow] = useState(false);
   const handleChange = (selectedDate) => {
     console.log(selectedDate);
@@ -10,56 +13,87 @@ export const AttendanceHistory = () => {
     setShow(state);
   };
 
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getAttendanceHistory = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch("/api/attendance/clockin/in");
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setAttendance(responseData.attendanceRecords);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    if (fetchData) {
+      getAttendanceHistory();
+      setFetchData(false);
+    }
+  }, [fetchData]);
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="p-2 mt-5">
-      <h1>Reports</h1>
+        <h1>Reports</h1>
 
-<div date-rangepicker className="flex items-center my-5">
-<span className="mr-4 text-gray-500">from</span>
-  <div className="relative">
-    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-      <svg
-        className="w-4 h-4 text-gray-500"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-      </svg>
-    </div>
-    <input
-      name="start"
-      type="date"
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-      placeholder="Select date start"
-    />
-  </div>
-  <span className="mx-4 text-gray-500">to</span>
-  <div className="relative">
-    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-      <svg
-        className="w-4 h-4 text-gray-500"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-      </svg>
-    </div>
-    <input
-      name="end"
-      type="date"
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-      placeholder="Select date end"
-    />
-  </div>
-  <button className="p-2 rounded-lg bg-blue-700 hover:bg-blue-900 text-white ml-3">
-    Filter
-  </button>
-</div>
+        <div date-rangepicker className="flex items-center my-5">
+          <span className="mr-4 text-gray-500">from</span>
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+              </svg>
+            </div>
+            <input
+              name="start"
+              type="date"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+              placeholder="Select date start"
+            />
+          </div>
+          <span className="mx-4 text-gray-500">to</span>
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+              </svg>
+            </div>
+            <input
+              name="end"
+              type="date"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+              placeholder="Select date end"
+            />
+          </div>
+          <button className="p-2 rounded-lg bg-blue-700 hover:bg-blue-900 text-white ml-3">
+            Filter
+          </button>
+        </div>
       </div>
 
       <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -77,16 +111,33 @@ export const AttendanceHistory = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-200">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50"
-            >
-              March 31
-            </th>
-            <td className="px-6 py-4">12:10</td>
-            <td className="px-6 py-4 bg-gray-50">Data Science</td>
-          </tr>
+          {loading ? (
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td colSpan={3} class="px-6 py-4 text-center">
+                <FontAwesomeIcon icon={faSpinner} spin /> Loading...
+              </td>
+            </tr>
+          ) : attendance.length > 0 ? (
+            attendance.map((at) => (
+              <tr className="border-b border-gray-200">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50"
+                >
+                  {new Date(at.clockIn).toDateString()}
+                </th>
+                <td className="px-6 py-4">
+                  {new Date(at.clockIn).toLocaleTimeString()}
+                </td>
+                <td className="px-6 py-4 bg-gray-50">{at.course.title}</td>
+              </tr>
+            ))
+          ) : (
+            <tr colSpan={3} class="bg-white border-b hover:bg-gray-50">
+              {" "}
+              <td class="px-6 py-4">No Data found.</td>{" "}
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

@@ -119,6 +119,104 @@ export async function POST(req) {
   }
 }
 
+// PUT API to edit an existing course
+export async function PUT(req) {
+  try {
+    const hasCookies = cookies().has("access-token");
+    let user = {};
+
+    if (!hasCookies) {
+      return NextResponse.json(
+        {
+          error:
+            "You're unauthorized to edit a course, please login to continue.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (hasCookies) {
+      const cookie = cookies().get("access-token");
+
+      if (cookie?.value) {
+        const verificationResult = await verifyToken(cookie.value);
+
+        if (verificationResult.status) {
+          user = verificationResult.decodedToken;
+          // Now you have the user details, you can use them as needed
+          //   console.log("User details:", user);
+        } else {
+          // Handle invalid token
+          return NextResponse.json(
+            { error: "Your session is expired, please login" },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
+    // Parse the request body
+    let { id, title, code, instructorId } = await req.json();
+
+    id = id.trim(); // Assuming you're passing the ID of the course to be edited
+    title = title.trim();
+    code = code.trim();
+    instructorId = instructorId.trim();
+
+    // Check if the course exists
+    const existingCourse = await prisma.courses.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingCourse) {
+      return NextResponse.json(
+        { error: "Course not found." },
+        { status: 404 }
+      );
+    }
+
+    // Check if the instructor exists
+    const existingInstructor = await prisma.instructors.findUnique({
+      where: {
+        id: instructorId,
+      },
+    });
+
+    if (!existingInstructor) {
+      return NextResponse.json(
+        { error: "Instructor not found." },
+        { status: 404 }
+      );
+    }
+
+    // Update the course details
+    const updatedCourse = await prisma.courses.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        code,
+        instructor: { connect: { id: instructorId } }, // Link the course to the instructor
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Course updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating course:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+
 export async function GET(req) {
   try {
     const hasCookies = cookies().has("access-token");

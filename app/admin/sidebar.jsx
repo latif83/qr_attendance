@@ -45,7 +45,7 @@ export const AdminSidebar = ({ setShowSidebar }) => {
         >
           Students
         </Link>
-        <Link
+        {/* <Link
           className={`p-2 rounded-lg hover:font-semibold ${
             pathname.includes("attendance") && "bg-gray-200"
           }`}
@@ -53,7 +53,7 @@ export const AdminSidebar = ({ setShowSidebar }) => {
           onClick={toggleSidebar}
         >
           Attendance
-        </Link>
+        </Link> */}
         <Link
           className={`p-2 rounded-lg hover:font-semibold ${
             pathname.includes("/admin/courses") && "bg-gray-200"

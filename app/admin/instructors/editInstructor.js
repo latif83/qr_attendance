@@ -1,11 +1,15 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from "./nStudents.module.css";
+import styles from "./addInstructors.module.css";
 import { faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-export const NStudents = ({ setAddStudent, setFetchData }) => {
+export const EditInstructor = ({
+  setEditInstructor,
+  setFetchData,
+  instructorData,
+}) => {
   const [sData, setSData] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -17,25 +21,37 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
     setSData(true);
   };
 
+  const [fname, setFName] = useState("");
+  const [lname, setLName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [staffid, setStaffId] = useState("");
+  const [address, setAddress] = useState("");
+
   useEffect(() => {
-    const addStudent = async () => {
+    setFName(instructorData.fname);
+    setLName(instructorData.lname);
+    setEmail(instructorData.email);
+    setContact(instructorData.contact);
+    setStaffId(instructorData.staffid);
+    setAddress(instructorData.address);
+
+    const editInstructor = async () => {
       try {
         setLoading(true);
 
         const data = {
-          fname: formData.get("fname"),
-          lname: formData.get("lname"),
-          email: formData.get("email"),
-          contact: formData.get("contact"),
-          student_id: formData.get("student_id"),
-          address: formData.get("address"),
-          level: formData.get("level"),
+          id: instructorData.id,
+          email,
+          fname,
+          lname,
+          contact,
+          address,
+          staffid,
         };
 
-        console.log(data)
-
-        const response = await fetch("/api/students", {
-          method: "POST",
+        const response = await fetch("/api/instructors", {
+          method: "PUT",
           body: JSON.stringify(data),
         });
 
@@ -48,15 +64,15 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
         }
 
         toast.success(responseData.message);
-        setFetchData(true)
-        setAddStudent(false)
+        setFetchData(true);
+        setEditInstructor(false);
       } catch (err) {
         console.log(err);
       }
     };
 
     if (sData) {
-      addStudent();
+      editInstructor();
       setSData(false);
     }
   }, [sData]);
@@ -65,10 +81,10 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
     <div className={`${styles.container} flex items-center justify-center`}>
       <div className="w-full max-w-2xl mx-auto bg-gray-50 rounded shadow p-6">
         <div className="flex justify-between mb-5">
-          <h1 className="font-semibold">Add Student</h1>
+          <h1 className="font-semibold">Edit Instructor</h1>
           <FontAwesomeIcon
             icon={faTimes}
-            onClick={() => setAddStudent(false)}
+            onClick={() => setEditInstructor(false)}
             className="text-lg cursor-pointer p-2 hover:bg-gray-300 rounded"
             color="red"
           />
@@ -83,6 +99,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={fname}
+                onChange={(e) => setFName(e.target.value)}
               />
               <label
                 htmlFor="fname"
@@ -99,6 +117,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={lname}
+                onChange={(e) => setLName(e.target.value)}
               />
               <label
                 htmlFor="lname"
@@ -117,6 +137,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <label
                 htmlFor="email"
@@ -133,6 +155,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
               />
               <label
                 htmlFor="contact"
@@ -147,17 +171,19 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
             <div className="relative z-0 w-full group">
               <input
                 type="text"
-                name="student_id"
-                id="student_id"
+                name="staffid"
+                id="staffid"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={staffid}
+                onChange={(e) => setStaffId(e.target.value)}
               />
               <label
-                htmlFor="student_id"
+                htmlFor="staffid"
                 className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-green-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Student Id
+                Staff Id
               </label>
             </div>
             <div className="relative z-0 w-full group">
@@ -168,6 +194,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
               <label
                 htmlFor="address"
@@ -178,27 +206,6 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
             </div>
           </div>
 
-          <div className="relative z-0 w-full group mb-5">
-            <label
-              htmlFor="level"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Level
-            </label>
-            <select
-              id="level"
-              name="level"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            >
-              <option value="">Select Level</option>
-              <option value={100}>100</option>
-              <option value={200}>200</option>
-              <option value={300}>300</option>
-              <option value={400}>400</option>
-            </select>
-          </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -206,11 +213,11 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
           >
             {loading ? (
               <>
-                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> Add
-                Student{" "}
+                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> Save
+                Changes{" "}
               </>
             ) : (
-              "Add Student"
+              "Save Changes"
             )}
           </button>
         </form>

@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { AddCourse } from "./addCourse";
 import { useEffect, useState } from "react";
 import { AddInstructor } from "./addInstructor";
+import { EditInstructor } from "./editInstructor";
 
 export default function Instructors() {
   const [addInstructor, setAddInstructor] = useState(false);
+  const [editInstructor,setEditInstructor] = useState(false)
+  const [instructorData,setInstructorData] = useState()
 
   const [instructors, setInstructors] = useState([]);
 
@@ -43,7 +46,20 @@ export default function Instructors() {
 
   return (
     <div>
-      {addInstructor && <AddInstructor setAddInstructor={setAddInstructor} setFetchData={setFetchData} />}
+      {addInstructor && (
+        <AddInstructor
+          setAddInstructor={setAddInstructor}
+          setFetchData={setFetchData}
+        />
+      )}
+
+{editInstructor && (
+        <EditInstructor
+        setEditInstructor={setEditInstructor}
+          setFetchData={setFetchData}
+          instructorData={instructorData}
+        />
+      )}
 
       <h1>Instructors</h1>
 
@@ -113,50 +129,53 @@ export default function Instructors() {
             </tr>
           </thead>
           <tbody>
-            
-
             {loading ? (
-        <tr className="bg-white border-b hover:bg-gray-50">
-          <td colSpan={6} className="px-6 py-4 text-center">
-            <FontAwesomeIcon icon={faSpinner} spin /> Loading...
-          </td>
-        </tr>
-      ) : instructors.length > 0 ? (
-        instructors.map((instructor) => (
-          <tr className="bg-white border-b hover:bg-gray-50">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
-                {instructor.staffid}
-              </th>
-              <td className="px-6 py-4">{instructor.fname} {instructor.lname}</td>
-              <td className="px-6 py-4">6</td>
-              <td className="px-6 py-4">{instructor.contact}</td>
-              <td className="px-6 py-4">{instructor.address}</td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-green-600 hover:underline mr-2"
-                >
-                  Edit
-                </a>
-                <a
-                  href="#"
-                  className="font-medium text-red-600 hover:underline"
-                >
-                  Delete
-                </a>
-              </td>
-            </tr>
-        ))
-      ) : (
-        <tr className="bg-white border-b hover:bg-gray-50">
-          <td colSpan={6} className="px-6 py-4 text-center">
-            No instructors found
-          </td>
-        </tr>
-      )}
+              <tr className="bg-white border-b hover:bg-gray-50">
+                <td colSpan={6} className="px-6 py-4 text-center">
+                  <FontAwesomeIcon icon={faSpinner} spin /> Loading...
+                </td>
+              </tr>
+            ) : instructors.length > 0 ? (
+              instructors.map((instructor) => (
+                <tr className="bg-white border-b hover:bg-gray-50">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  >
+                    {instructor.staffid}
+                  </th>
+                  <td className="px-6 py-4">
+                    {instructor.fname} {instructor.lname}
+                  </td>
+                  <td className="px-6 py-4"> {instructor.courseCount}</td>
+                  <td className="px-6 py-4">{instructor.contact}</td>
+                  <td className="px-6 py-4">{instructor.address}</td>
+                  <td className="px-6 py-4">
+                    <span
+                    onClick={()=>{
+                      setInstructorData(instructor)
+                      setEditInstructor(true)
+                    }}
+                      className="font-medium text-green-600 hover:underline mr-2 cursor-pointer"
+                    >
+                      Edit
+                    </span>
+                    <a
+                      href="#"
+                      className="font-medium text-red-600 hover:underline"
+                    >
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className="bg-white border-b hover:bg-gray-50">
+                <td colSpan={6} className="px-6 py-4 text-center">
+                  No instructors found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

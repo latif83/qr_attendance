@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NStudents } from "./nStudents";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { EditStudent } from "./editStudent";
 
 export default function Students() {
   const [addStudent, setAddStudent] = useState(false);
+  const [editStudent, setEditStudent] = useState(false);
+  const [studentData, setStudentData] = useState();
 
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,7 +45,16 @@ export default function Students() {
 
   return (
     <div className="h-full">
-      {addStudent && <NStudents setAddStudent={setAddStudent} setFetchData={setFetchData} />}
+      {addStudent && (
+        <NStudents setAddStudent={setAddStudent} setFetchData={setFetchData} />
+      )}
+      {editStudent && (
+        <EditStudent
+          setEditStudent={setEditStudent}
+          setFetchData={setFetchData}
+          studentData={studentData}
+        />
+      )}
       <h1>Students</h1>
 
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
@@ -126,23 +138,27 @@ export default function Students() {
                   >
                     {student.studid}
                   </th>
-                  <td class="px-6 py-4">{student.fname} {student.lname}</td>
+                  <td class="px-6 py-4">
+                    {student.fname} {student.lname}
+                  </td>
                   <td class="px-6 py-4">{student.email}</td>
                   <td class="px-6 py-4">{student.level}</td>
                   <td class="px-6 py-4">{student.contact}</td>
                   <td class="px-6 py-4">
-                    <a
-                      href="#"
-                      class="font-medium text-green-600 hover:underline"
+                    <span
+                      onClick={() => {
+                        setStudentData(student);
+                        setEditStudent(true);
+                      }}
+                      class="font-medium text-green-600 hover:underline mr-2 cursor-pointer"
                     >
                       Edit
-                    </a>
-                    <a
-                      href="#"
+                    </span>
+                    <span
                       class="font-medium text-red-600 hover:underline"
                     >
                       Delete
-                    </a>
+                    </span>
                   </td>
                 </tr>
               ))

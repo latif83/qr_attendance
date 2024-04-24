@@ -43,10 +43,8 @@ export async function POST(req) {
       }
     }
 
-
     // Parse the request body
-    let { fname, lname, email, contact, staffid, address } =
-      await req.json();
+    let { fname, lname, email, contact, staffid, address } = await req.json();
 
     fname = fname.trim();
     lname = lname.trim();
@@ -114,6 +112,96 @@ export async function POST(req) {
   }
 }
 
+// PUT API to edit an existing instructor
+export async function PUT(req) {
+  try {
+    const hasCookies = cookies().has("access-token");
+    let user = {};
+
+    if (!hasCookies) {
+      return NextResponse.json(
+        {
+          error:
+            "You're unauthorized to edit an instructor, please login to continue.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (hasCookies) {
+      const cookie = cookies().get("access-token");
+
+      if (cookie?.value) {
+        const verificationResult = await verifyToken(cookie.value);
+
+        if (verificationResult.status) {
+          user = verificationResult.decodedToken;
+          // Now you have the user details, you can use them as needed
+          //   console.log("User details:", user);
+        } else {
+          // Handle invalid token
+          return NextResponse.json(
+            { error: "Your session is expired, please login" },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
+    // Parse the request body
+    let { id, fname, lname, email, contact, staffid, address } = await req.json();
+
+    id = id.trim(); // Assuming you're passing the ID of the instructor to be edited
+    fname = fname.trim();
+    lname = lname.trim();
+    email = email.trim();
+    contact = contact.trim();
+    staffid = staffid.trim();
+    address = address.trim();
+
+    // Check if the instructor exists
+    const existingInstructor = await prisma.instructors.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingInstructor) {
+      return NextResponse.json(
+        { error: "Instructor not found." },
+        { status: 404 }
+      );
+    }
+
+    // Update the instructor details
+    const updatedInstructor = await prisma.instructors.update({
+      where: {
+        id,
+      },
+      data: {
+        fname,
+        lname,
+        email,
+        contact,
+        staffid,
+        address,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Instructor updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating instructor:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+
 
 export async function GET(req) {
   try {
@@ -150,18 +238,41 @@ export async function GET(req) {
       }
     }
 
-    // Fetch all instructors from the database
-    const Instructors = await prisma.instructors.findMany({
-      orderBy: [
-        {
-          createdAt: 'desc'
-        }
-      ]
+    // Fetch all instructors from the database along with the count of courses they teach
+    const instructorsWithCourseCount = await prisma.instructors.findMany({
+      orderBy: [{ createdAt: "desc" }],
+      select: {
+        id: true,
+        email: true,
+        fname: true,
+        lname: true,
+        contact: true,
+        staffid: true,
+        address: true,
+        courses: {
+          // Include only the count of courses without fetching all course details
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
-    
+    // Modify the instructors data structure to include the course count
+    const Instructors = instructorsWithCourseCount.map((instructor) => ({
+      id: instructor.id,
+      email: instructor.email,
+      fname: instructor.fname,
+      lname: instructor.lname,
+      contact: instructor.contact,
+      staffid : instructor.staffid,
+      address : instructor.address,
+      courseCount: instructor.courses.length,
+    }));
 
-    return NextResponse.json({Instructors}, { status: 200 });
+    console.log(Instructors);
+
+    return NextResponse.json({ Instructors }, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json(

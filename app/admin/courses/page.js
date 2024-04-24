@@ -4,10 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AddCourse } from "./addCourse";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { EditCourse } from "./editCourse";
 
 export default function Courses() {
 
     const [adCourse,setAddCourse] = useState(false)
+    const [editCourse,setEditCourse] = useState(false)
+
+    const [courseData,setCourseData] = useState()
 
     const [courses,setCourses] = useState([])
 
@@ -45,6 +49,8 @@ export default function Courses() {
   return (
     <div>
         {adCourse && <AddCourse setAddCourse={setAddCourse} setFetchData={setFetchData} />}
+
+        {editCourse && <EditCourse setEditCourse={setEditCourse} setFetchData={setFetchData} courseData={courseData} />}
 
       <h1>Courses</h1>
 
@@ -127,9 +133,11 @@ export default function Courses() {
           <td class="px-6 py-4">{course.title}</td>
           <td class="px-6 py-4">{course.instructor.fname} {course.instructor.lname}</td>
           <td class="px-6 py-4">
-            <a href="#" class="font-medium text-green-600 hover:underline mr-2">
+            <span onClick={()=>{
+              setCourseData(course); setEditCourse(true)
+            }} class="font-medium text-green-600 hover:underline mr-2 cursor-pointer">
               Edit
-            </a>
+            </span>
             <a href="#" class="font-medium text-red-600 hover:underline">
               Delete
             </a>

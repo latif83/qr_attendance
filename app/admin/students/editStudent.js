@@ -5,12 +5,20 @@ import { faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-export const NStudents = ({ setAddStudent, setFetchData }) => {
+export const EditStudent = ({ setEditStudent, setFetchData, studentData }) => {
   const [sData, setSData] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState(null);
+
+  const [fname,setFName] = useState("")
+  const [lname,setLName] = useState("")
+  const [email,setEmail] = useState("")
+  const [contact,setContact] = useState("")
+  const [studid,setStudId] = useState("")
+  const [address,setAddress] = useState("")
+  const [level,setLevel] = useState("")
 
   const submit = (fData) => {
     setFormData(fData);
@@ -18,24 +26,34 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
   };
 
   useEffect(() => {
-    const addStudent = async () => {
+
+    setFName(studentData.fname)
+    setLName(studentData.lname)
+    setEmail(studentData.email)
+    setContact(studentData.contact)
+    setStudId(studentData.studid)
+    setAddress(studentData.address)
+    setLevel(studentData.level)
+
+    const editStudent = async () => {
       try {
         setLoading(true);
 
         const data = {
-          fname: formData.get("fname"),
-          lname: formData.get("lname"),
-          email: formData.get("email"),
-          contact: formData.get("contact"),
-          student_id: formData.get("student_id"),
-          address: formData.get("address"),
-          level: formData.get("level"),
+          fname,
+          lname,
+          email,
+          contact,
+          student_id : studid,
+          address,
+          level,
+          id : studentData.id
         };
 
-        console.log(data)
+        // console.log(data)
 
         const response = await fetch("/api/students", {
-          method: "POST",
+          method: "PUT",
           body: JSON.stringify(data),
         });
 
@@ -49,14 +67,14 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
 
         toast.success(responseData.message);
         setFetchData(true)
-        setAddStudent(false)
+        setEditStudent(false)
       } catch (err) {
         console.log(err);
       }
     };
 
     if (sData) {
-      addStudent();
+      editStudent();
       setSData(false);
     }
   }, [sData]);
@@ -65,10 +83,10 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
     <div className={`${styles.container} flex items-center justify-center`}>
       <div className="w-full max-w-2xl mx-auto bg-gray-50 rounded shadow p-6">
         <div className="flex justify-between mb-5">
-          <h1 className="font-semibold">Add Student</h1>
+          <h1 className="font-semibold">Edit Student</h1>
           <FontAwesomeIcon
             icon={faTimes}
-            onClick={() => setAddStudent(false)}
+            onClick={() => setEditStudent(false)}
             className="text-lg cursor-pointer p-2 hover:bg-gray-300 rounded"
             color="red"
           />
@@ -83,6 +101,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={fname}
+                onChange={(e)=>setFName(e.target.value)}
               />
               <label
                 htmlFor="fname"
@@ -99,6 +119,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={lname}
+                onChange={(e)=>setLName(e.target.value)}
               />
               <label
                 htmlFor="lname"
@@ -117,6 +139,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
               />
               <label
                 htmlFor="email"
@@ -133,6 +157,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={contact}
+                onChange={(e)=>setContact(e.target.value)}
               />
               <label
                 htmlFor="contact"
@@ -152,6 +178,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={studid}
+                onChange={(e)=>setStudId(e.target.value)}
               />
               <label
                 htmlFor="student_id"
@@ -168,6 +196,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-green-600 peer"
                 placeholder=" "
                 required
+                value={address}
+                onChange={(e)=>setAddress(e.target.value)}
               />
               <label
                 htmlFor="address"
@@ -190,6 +220,8 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
               name="level"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
               required
+              value={level}
+                onChange={(e)=>setLevel(e.target.value)}
             >
               <option value="">Select Level</option>
               <option value={100}>100</option>
@@ -206,11 +238,11 @@ export const NStudents = ({ setAddStudent, setFetchData }) => {
           >
             {loading ? (
               <>
-                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> Add
-                Student{" "}
+                <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> Save
+                Changes{" "}
               </>
             ) : (
-              "Add Student"
+              "Save Changes"
             )}
           </button>
         </form>

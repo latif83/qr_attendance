@@ -1,6 +1,9 @@
 "use client"
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Students(){
 
@@ -24,6 +27,38 @@ export default function Students(){
   }, []);
 
 
+  const [loading, setLoading] = useState(false);
+  const [fetchData, setFetchData] = useState(true);
+  const [data,setData] = useState({})
+
+  useEffect(() => {
+    const getStudentData = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch("/api/students/student");
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setData(responseData.student);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    if (fetchData) {
+      getStudentData();
+      setFetchData(false);
+    }
+  }, [fetchData]);
+
     return (
         <div>
 
@@ -40,72 +75,66 @@ export default function Students(){
           <div>
             <h3 className="font-semibold text-xs text-red-500">First Name: </h3>
             <p>
-              {/* {empLoading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.fname
-              )} */}
-              Daniel
+                data?.fname
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="font-semibold text-xs text-red-500">Last Name: </h3>
             <p>
-              {/* {empLoading ? (
+            {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.lname
-              )} */}
-              Osie
+                data?.lname
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="font-semibold text-xs text-red-500">Student Id.: </h3>
             <p>
-              {/* {empLoading ? (
+            {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.staffid
-              )} */}
-              BSC/CSM/20222187
+                data?.studid
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="font-semibold text-xs text-red-500">Level: </h3>
             <p>
-              {/* {empLoading ? (
+            {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.department?.name
-              )} */}
-              300
+                data?.level
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="font-semibold text-xs text-red-500">Address: </h3>
             <p>
-              {/* {empLoading ? (
+            {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.address
-              )} */}
-              Pokuase
+                data?.address
+              )}
             </p>
           </div>
 
           <div>
             <h3 className="font-semibold text-xs text-red-500">Contact: </h3>
             <p>
-              {/* {empLoading ? (
+            {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                employeeInfo?.address
-              )} */}
-              0244893848
+                data?.contact
+              )}
             </p>
           </div>
         </div>
@@ -126,27 +155,21 @@ export default function Students(){
 
         <div className="grid sm:grid-cols-2 gap-6 mt-5">
           <Link
-            href="/employee/attendance"
+            href="/students/attendance"
             className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50"
           >
             Clock in / out
           </Link>
 
-          <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
+          <Link href="/students/attendance" className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
             View Attendance History
-          </div>
+          </Link>
 
-          <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
+          <Link href="/students/register" className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
             Register Courses
-          </div>
+          </Link>
 
-          {/* <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
-            Book Apointment
-          </div>
 
-          <div className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
-            View Apointment History
-          </div> */}
         </div>
            
         </div>

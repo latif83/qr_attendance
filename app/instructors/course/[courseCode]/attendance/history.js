@@ -15,13 +15,17 @@ export const AttendanceHistory = ({courseId}) => {
 
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fetchData,setFetchData] = useState(true)
+  const [formData,setFormData] = useState(null)
 
   useEffect(() => {
     const getAttendanceHistory = async () => {
       try {
         setLoading(true);
 
-        const response = await fetch(`/api/attendance/clockin/students?courseId=${courseId}`);
+        let data = formData ? `courseId=${courseId}&fromDate=${formData.get('start') ? formData.get('start') : ''}&toDate=${formData.get('end') ? formData.get('end') : ''}` : `courseId=${courseId}`
+
+        const response = await fetch(`/api/attendance/clockin/students?${data}`);
         const responseData = await response.json();
 
         if (!response.ok) {
@@ -38,17 +42,24 @@ export const AttendanceHistory = ({courseId}) => {
       }
     };
 
-    
+    if(fetchData){
       getAttendanceHistory();
+      setFetchData(false)
+    }
 
-  }, []);
+  }, [fetchData]);
+
+  const filter = (fData)=>{
+    setFormData(fData)
+    setFetchData(true)
+  }
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="p-2 mt-5">
       <h1>Reports</h1>
 
-<div date-rangepicker className="flex items-center my-5">
+<form action={filter} date-rangepicker className="flex items-center my-5">
 <span className="mr-4 text-gray-500">from</span>
   <div className="relative">
     <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -89,10 +100,10 @@ export const AttendanceHistory = ({courseId}) => {
       placeholder="Select date end"
     />
   </div>
-  <button className="p-2 rounded-lg bg-blue-700 hover:bg-blue-900 text-white ml-3">
+  <button type="submit" className="p-2 rounded-lg bg-blue-700 hover:bg-blue-900 text-white ml-3">
     Filter
   </button>
-</div>
+</form>
       </div>
 
       <table className="w-full text-sm text-left rtl:text-right text-gray-500">

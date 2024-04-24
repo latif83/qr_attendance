@@ -1,5 +1,6 @@
 "use client";
 import {
+  faPersonChalkboard,
   faSignOut,
   faUser,
   faUserClock,
@@ -9,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { toast } from "react-toastify";
+import { faLeanpub } from "@fortawesome/free-brands-svg-icons";
 
 export default function AdminDashboard() {
   // State to hold the current time
@@ -62,7 +64,7 @@ export default function AdminDashboard() {
         </div>
       </div>
       <div className="mt-5">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <div className="rounded p-3 bg-black text-white relative">
             <div className="flex gap-2">
               <span className={`${styles.icons}`}>
@@ -76,7 +78,7 @@ export default function AdminDashboard() {
 
               <h1>Total Students</h1>
             </div>
-            <div>5</div>
+            <div>{summary.studentsCount}</div>
           </div>
           <div className="rounded p-3 bg-black text-white relative">
             <div className="flex gap-2">
@@ -91,22 +93,37 @@ export default function AdminDashboard() {
 
               <h1>Admins</h1>
             </div>
-            <div>2</div>
+            <div>{summary.adminsCount}</div>
           </div>
           <div className="rounded p-3 bg-black text-white relative">
             <div className="flex gap-2">
               <span className={`${styles.icons}`}>
                 <FontAwesomeIcon
-                  icon={faUserClock}
+                  icon={faPersonChalkboard}
                   width={50}
                   height={50}
                   className={`text-4xl text-green-200`}
                 />
               </span>
 
-              <h1>Today's Attendance</h1>
+              <h1>Instructors</h1>
             </div>
-            <div>2</div>
+            <div>{summary.instructorsCount}</div>
+          </div>
+          <div className="rounded p-3 bg-black text-white relative">
+            <div className="flex gap-2">
+              <span className={`${styles.icons}`}>
+                <FontAwesomeIcon
+                  icon={faLeanpub}
+                  width={50}
+                  height={50}
+                  className={`text-4xl text-green-200`}
+                />
+              </span>
+
+              <h1>Courses</h1>
+            </div>
+            <div>{summary.coursesCount}</div>
           </div>
         </div>
       </div>

@@ -135,7 +135,13 @@ export default function Students() {
                       href="#"
                       class="font-medium text-green-600 hover:underline"
                     >
-                      Manage
+                      Edit
+                    </a>
+                    <a
+                      href="#"
+                      class="font-medium text-red-600 hover:underline"
+                    >
+                      Delete
                     </a>
                   </td>
                 </tr>

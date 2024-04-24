@@ -97,6 +97,7 @@ export async function POST(req) {
         },
         select: {
           id: true,
+          attendanceCode : true,
           course: {
             select: {
               id: true,
@@ -133,7 +134,7 @@ export async function POST(req) {
       data: {
         studentId,
         courseId: existingAttendanceSession.course.id,
-        AttendanceSessionId: existingAttendanceSession.id,
+        AttendanceSessionId: existingAttendanceSession.attendanceCode,
         clockIn: new Date(), // Mark the current time as the clock-in time
       },
     });

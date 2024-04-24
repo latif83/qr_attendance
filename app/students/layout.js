@@ -1,9 +1,10 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AdminSidebar, EmployeeSidebar } from "./sidebar";
-import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons";
+import { faBarsStaggered, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import styles from "./layout.module.css";
+import { toast } from "react-toastify";
 
 export default function RootLayout({ children }) {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -19,6 +20,38 @@ export default function RootLayout({ children }) {
       setShowSidebar(false);
     }
   }, []);
+
+  const [loading, setLoading] = useState(false);
+  const [fetchData, setFetchData] = useState(true);
+  const [data,setData] = useState({})
+
+  useEffect(() => {
+    const getStudentData = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch("/api/students/student");
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        setLoading(false);
+
+        setData(responseData.student);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    if (fetchData) {
+      getStudentData();
+      setFetchData(false);
+    }
+  }, [fetchData]);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -49,7 +82,11 @@ export default function RootLayout({ children }) {
           </div>
           <div>
             <h1>Good Morning,</h1>
-            <p>Daniel Osie</p>
+            <p>{loading ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                data?.fname
+              )}</p>
           </div>
         </div>
         <div style={{height:"90%"}} className="p-3 overflow-y-auto">

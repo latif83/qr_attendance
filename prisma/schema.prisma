@@ -83,7 +83,7 @@ model attendanceSessions {
   id             String    @id @default(cuid())
   startDateTime  DateTime
   endDateTime    DateTime?
-  attendanceCode String
+  attendanceCode String @unique
   courseId       String // Foreign key referencing course's id
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

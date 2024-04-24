@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
           </div>
           <div>
             <h1>Good Morning,</h1>
-            <p>Abdul-Latif Mohammed</p>
+            <p>Admin</p>
           </div>
         </div>
         <div style={{height:"90%"}} className="p-3 overflow-y-auto">

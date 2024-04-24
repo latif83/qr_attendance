@@ -3,16 +3,50 @@ import { faArrowRotateBack } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function RootLayout({ children, params }) {
   const pathname = usePathname();
+
+  const [course,setCourse] = useState({})
+
+  useEffect(()=>{
+    const getCourse = async () => {
+      try {
+        // setLoading(true);
+
+        const data = {
+          courseId : params.courseCode
+        }
+
+        const response = await fetch(`/api/courses/course?courseId=${params.courseCode}`);
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          toast.error(responseData.error);
+          return;
+        }
+
+        // setLoading(false);
+
+        setCourse(responseData.Course);
+      } catch (err) {
+        console.log(err);
+        toast.error("An unexpected error happended, Please try again later.");
+      }
+    };
+
+    getCourse()
+  },[])
+
   return (
     <div className="h-screen bg-gray-50">
       <div className="bg-green-700">
         <div className="container relative mx-auto py-3 pb-0">
           <div className="py-3 flex justify-between items-center">
             <div>
-              <button className="p-2 rounded bg-gray-50 hover:bg-gray-100 flex items-center gap-1">
+              <Link href={`/instructors`} className="p-2 rounded bg-gray-50 hover:bg-gray-100 flex items-center gap-1 text-sm hover:bg-gray-200">
                 <FontAwesomeIcon
                   className="text-lg"
                   width={20}
@@ -20,12 +54,12 @@ export default function RootLayout({ children, params }) {
                   icon={faArrowRotateBack}
                 />
                 back
-              </button>
+              </Link>
             </div>
 
             <div className="text-gray-50">
-              <h1 className="text-xl font-bold">IT-209</h1>
-              <p>Data Assurance</p>
+              <h1 className="text-xl font-bold">{course.code}</h1>
+              <p>{course.title}</p>
             </div>
           </div>
 

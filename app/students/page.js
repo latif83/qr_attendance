@@ -1,13 +1,13 @@
-"use client"
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+"use client";
+import { Logout } from "@/components/logout";
+import { faSignOut, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-export default function Students(){
-
-      // State to hold the current time
+export default function Students() {
+  // State to hold the current time
   const [currentTime, setCurrentTime] = useState("");
 
   // Function to update the current time
@@ -26,10 +26,9 @@ export default function Students(){
     return () => clearInterval(interval);
   }, []);
 
-
   const [loading, setLoading] = useState(false);
   const [fetchData, setFetchData] = useState(true);
-  const [data,setData] = useState({})
+  const [data, setData] = useState({});
 
   useEffect(() => {
     const getStudentData = async () => {
@@ -59,10 +58,14 @@ export default function Students(){
     }
   }, [fetchData]);
 
-    return (
-        <div>
+  const [logout,setLogout] = useState(false)
 
-<div className="border-b pb-3 flex sm:flex-row flex-col justify-between items-center">
+  return (
+    <div>
+
+{logout && <Logout setLogout={setLogout} />}
+
+      <div className="border-b pb-3 flex sm:flex-row flex-col justify-between items-center">
         <h1 className="font-bold text-xl">Students Dashboard</h1>
         <div>
           {/* Display the current time */}
@@ -70,8 +73,8 @@ export default function Students(){
         </div>
       </div>
 
-<div className="mt-5">
-<div className="grid sm:grid-cols-3 grid-cols-2 gap-4">
+      <div className="mt-5">
+        <div className="grid sm:grid-cols-3 grid-cols-2 gap-4">
           <div>
             <h3 className="font-semibold text-xs text-red-500">First Name: </h3>
             <p>
@@ -86,7 +89,7 @@ export default function Students(){
           <div>
             <h3 className="font-semibold text-xs text-red-500">Last Name: </h3>
             <p>
-            {loading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 data?.lname
@@ -95,9 +98,11 @@ export default function Students(){
           </div>
 
           <div>
-            <h3 className="font-semibold text-xs text-red-500">Student Id.: </h3>
+            <h3 className="font-semibold text-xs text-red-500">
+              Student Id.:{" "}
+            </h3>
             <p>
-            {loading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 data?.studid
@@ -108,7 +113,7 @@ export default function Students(){
           <div>
             <h3 className="font-semibold text-xs text-red-500">Level: </h3>
             <p>
-            {loading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 data?.level
@@ -119,7 +124,7 @@ export default function Students(){
           <div>
             <h3 className="font-semibold text-xs text-red-500">Address: </h3>
             <p>
-            {loading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 data?.address
@@ -130,7 +135,7 @@ export default function Students(){
           <div>
             <h3 className="font-semibold text-xs text-red-500">Contact: </h3>
             <p>
-            {loading ? (
+              {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 data?.contact
@@ -139,39 +144,54 @@ export default function Students(){
           </div>
         </div>
 
-        <div className="flex justify-end mb-3">
+        {/* <div className="flex justify-end mb-3">
           <button
-            // onClick={() => setEditProfile(true)}
+            onClick={() => setEditProfile(true)}
             className="bg-green-600 hover:bg-green-800 text-white rounded-lg p-2 text-xs"
           >
             Edit Profile
           </button>
-        </div>
-</div>
+        </div> */}
+      </div>
 
-<div className="border-b">
-          <h1>Things to do</h1>
-        </div>
+      <div className="border-b mt-5">
+        <h1>Things to do</h1>
+      </div>
 
-        <div className="grid sm:grid-cols-2 gap-6 mt-5">
-          <Link
-            href="/students/attendance"
-            className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50"
-          >
-            Clock in / out
-          </Link>
+      <div className="grid sm:grid-cols-2 gap-6 mt-5">
+        <Link
+          href="/students/attendance"
+          className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50"
+        >
+          Clock in / out
+        </Link>
 
-          <Link href="/students/attendance" className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
-            View Attendance History
-          </Link>
+        <Link
+          href="/students/attendance"
+          className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50"
+        >
+          View Attendance History
+        </Link>
 
-          <Link href="/students/register" className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50">
-            Register Courses
-          </Link>
+        <Link
+          href="/students/register"
+          className="shadow-lg p-3 rounded-lg bg-green-200 cursor-pointer hover:bg-green-50"
+        >
+          Register Courses
+        </Link>
+      </div>
 
-
-        </div>
-           
-        </div>
-    )
+      <div className="mt-12 flex justify-center">
+        <button
+          onClick={() => {
+            setLogout(true);
+          }}
+          className="p-2 rounded-lg bg-red-700 hover:bg-red-600 text-white"
+        >
+          <FontAwesomeIcon className="mr-2" icon={faSignOut} />
+          Logout
+        </button>
+      </div>
+    </div>
+  );
 }

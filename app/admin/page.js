@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { toast } from "react-toastify";
 import { faLeanpub } from "@fortawesome/free-brands-svg-icons";
+import { Logout } from "@/components/logout";
 
 export default function AdminDashboard() {
   // State to hold the current time
@@ -54,8 +55,11 @@ export default function AdminDashboard() {
     getSummary();
   }, []);
 
+  const [logout,setLogout] = useState(false)
+
   return (
     <div>
+      {logout && <Logout setLogout={setLogout} />}
       <div className="border-b pb-3 flex sm:flex-row flex-col justify-between items-center">
         <h1 className="font-bold text-xl">Admin Dashboard</h1>
         <div>
@@ -129,7 +133,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="mt-12 flex justify-center">
-        <button className="p-2 rounded-lg bg-red-600 text-white">
+        <button onClick={()=>{setLogout(true)}} className="p-2 rounded-lg bg-red-700 hover:bg-red-600 text-white">
           <FontAwesomeIcon className="mr-2" icon={faSignOut} />
           Logout
         </button>

@@ -1,4 +1,5 @@
 "use client";
+import { Logout } from "@/components/logout";
 import {
   faCaretRight,
   faSignOut,
@@ -69,8 +70,11 @@ export default function Instructors() {
     }
   }, [fetchData]);
 
+  const [logout,setLogout] = useState(false)
+
   return (
     <div className="bg-green-700 h-screen">
+      {logout && <Logout setLogout={setLogout} />}
       <div className="pb-12 py-3 bg-gray-50 relative">
         <div className="flex container mx-auto justify-between">
           <div className="flex gap-2 items-center">
@@ -84,7 +88,7 @@ export default function Instructors() {
           </div>
 
           <div>
-            <button className="bg-red-700 text-white hover:bg-red-500 p-2 rounded flex gap-2 items-center">
+            <button onClick={()=>setLogout(true)} className="bg-red-700 text-white hover:bg-red-500 p-2 rounded flex gap-2 items-center">
               <FontAwesomeIcon
                 icon={faSignOut}
                 className="text-lg"

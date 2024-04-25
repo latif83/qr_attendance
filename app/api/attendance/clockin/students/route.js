@@ -7,6 +7,8 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/actions/action";
 
+export const dynamic = 'force-dynamic';
+
 // GET API to retrieve all students clocked in for a particular course
 export async function GET(req) {
     try {

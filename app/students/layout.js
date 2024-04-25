@@ -1,31 +1,30 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AdminSidebar, EmployeeSidebar } from "./sidebar";
+import { AdminSidebar } from "./sidebar";
 import { faBarsStaggered, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import styles from "./layout.module.css";
 import { toast } from "react-toastify";
 
-export default function RootLayout({ children }) {
+export default function StudentsRootLayout({ children }) {
   const [showSidebar, setShowSidebar] = useState(true);
 
   const toggleSidebar = () => {
     setShowSidebar((state) => !state);
   };
 
-  useEffect(() => {
-    const width = window.innerWidth;
-
-    if (width < 965) {
-      setShowSidebar(false);
-    }
-  }, []);
-
   const [loading, setLoading] = useState(false);
   const [fetchData, setFetchData] = useState(true);
   const [data,setData] = useState({})
 
   useEffect(() => {
+
+    const width = window.innerWidth;
+
+    if (width < 965) {
+      setShowSidebar(false);
+    }
+
     const getStudentData = async () => {
       try {
         setLoading(true);
